@@ -1,0 +1,88 @@
+import sqlite3
+from sqlite3 import Error
+
+
+def sql_connection():
+    try:
+        con = sqlite3.connect('2020_BCI181_Bogatyrkova_s1_hw')
+        return con
+    except Error:
+        print(Error)
+
+
+def sql_table_users(con):
+    cursor0bj = con.cursor()
+    users = cursor0bj.execute("CREATE TABLE if not exists users(id integer PRIMARY KEY, name text, age integer, city text)")
+    con.commit()
+
+
+con = sql_connection()
+sql_table_users(con)
+
+
+def sql_table_messages(con):
+    cursor0bj = con.cursor()
+    messages = cursor0bj.execute("CREATE TABLE if not exists messages(user_id integer, user_name text, message text, time_of_sending timestamp)")
+    con.commit()
+
+
+sql_table_messages(con)
+
+
+def sql_insert_inusers(con, entities):
+    curs0bj = con.cursor()
+    curs0bj.executemany("INSERT or ignore INTO users(id, name, age, city) VALUES (?, ?, ?, ?)", entities)
+    con.commit()
+
+
+entities = [(1, "Kate", 17, "Los Angeles"),
+            (2, "Rose", 25, "New York"),
+            (3, "James", 13, "Seattle")]
+
+
+sql_insert_inusers(con, entities)
+
+
+def sql_insert_inmessages(con, entities2):
+    curs0bj = con.cursor()
+    curs0bj.executemany("INSERT or ignore INTO messages(user_id, user_name, message, time_of_sending) VALUES (?, ?, ?, ?)", entities2)
+    con.commit()
+
+
+entities2 = [(2, "Rose", "Hello, Kate!", "02/12/2019 12:23:36"),
+             (1, "Kate", "Hello, Rose! Long time no see:)", "02/12/2019 12:23:45"),
+             (3, "James", "Rose, can you help me?", "02/12/2019 12:23:46"),
+             (2, "Rose", "Sorry, Kate, will write to you later, James asked for help:(", "02/12/2019 12:55:59"),
+             (1, "Kate", "OK. Don't worry xx", "02/12/2019 13:01:10")]
+
+
+sql_insert_inmessages(con, entities2)
+
+
+def sql_fetch_users(con):
+    cursorObj = con.cursor()
+    cursorObj.execute('SELECT * FROM users')
+    rows = cursorObj.fetchall()
+    print('')
+    print("TABLE WITH USERS")
+    print('')
+    for row in rows:
+        print(row)
+
+
+sql_fetch_users(con)
+
+
+def sql_fetch_messages(con):
+    cursorObj = con.cursor()
+    cursorObj.execute('SELECT * FROM messages')
+    rows = cursorObj.fetchall()
+    print('')
+    print("TABLE WITH MESSAGES")
+    print('')
+    for row in rows:
+        print(row)
+
+
+sql_fetch_messages(con)
+
